@@ -17,7 +17,6 @@ const courses = [
       "Downloadable cheat sheets",
       "Certificate of completion",
     ],
-    githubRepo: "https://github.com/learncode/html-fundamentals-course",
     isPublished: true,
   },
   {
@@ -38,7 +37,6 @@ const courses = [
       "Design system templates",
       "Certificate of completion",
     ],
-    githubRepo: "https://github.com/learncode/css-mastery-course",
     isPublished: true,
   },
   {
@@ -59,7 +57,6 @@ const courses = [
       "API integration exercises",
       "Certificate of completion",
     ],
-    githubRepo: "https://github.com/learncode/javascript-complete-course",
     isPublished: true,
   },
   {
@@ -80,7 +77,6 @@ const courses = [
       "Deployment guides for Vercel and Netlify",
       "Certificate of completion",
     ],
-    githubRepo: "https://github.com/learncode/react-development-course",
     isPublished: true,
   },
   {
@@ -101,7 +97,6 @@ const courses = [
       "Flask intro bonus module",
       "Certificate of completion",
     ],
-    githubRepo: "https://github.com/learncode/python-programming-course",
     isPublished: true,
   },
 ];
