@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const dbConnection = require("./src/config/dbConnection");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./src/routes/authRoutes");
+const courseRoutes = require("./src/routes/courseRoutes");
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(cors({
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/courses", courseRoutes);
 
 // Mongoose connect
 dbConnection();
