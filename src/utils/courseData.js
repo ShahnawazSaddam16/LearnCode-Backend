@@ -9,6 +9,7 @@ const courses = [
     price: 29,
     lessons: 24,
     thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
+    githubRepo: "https://github.com/buttnetworks/html-fundamentals",
     includes: [
       "24 video lessons",
       "5 hands-on projects",
@@ -29,6 +30,7 @@ const courses = [
     price: 39,
     lessons: 32,
     thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",
+    githubRepo: "https://github.com/buttnetworks/css-mastery",
     includes: [
       "32 video lessons",
       "8 responsive layout projects",
@@ -49,6 +51,7 @@ const courses = [
     price: 49,
     lessons: 48,
     thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
+    githubRepo: "https://github.com/buttnetworks/javascript-complete",
     includes: [
       "48 video lessons",
       "12 coding challenges",
@@ -69,6 +72,7 @@ const courses = [
     price: 59,
     lessons: 56,
     thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+    githubRepo: "https://github.com/buttnetworks/react-development",
     includes: [
       "56 video lessons",
       "Build 4 full React applications",
@@ -89,6 +93,7 @@ const courses = [
     price: 49,
     lessons: 52,
     thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
+    githubRepo: "https://github.com/buttnetworks/python-programming",
     includes: [
       "52 video lessons",
       "10 Python scripts and 3 full projects",

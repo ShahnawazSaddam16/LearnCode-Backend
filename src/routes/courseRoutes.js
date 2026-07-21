@@ -5,7 +5,7 @@ const limiter = require("../utils/limiter");
 
 const router = express.Router();
 
-router.get("/", limiter, authMiddleware, getAllCourses);
-router.get("/:slug", limiter, authMiddleware, getCourseBySlug);
+router.get("/courseData", limiter, authMiddleware, getAllCourses);
+router.get("/courseData/:slug", limiter, authMiddleware, getCourseBySlug);
 
 module.exports = router;
