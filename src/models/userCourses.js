@@ -35,12 +35,15 @@ const userCoursesSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["pending", "completed", "failed"],
-      default: "completed",
+      default: "pending",
     },
   },
   { timestamps: true }
 );
 
-userCoursesSchema.index({ user: 1, course: 1, status: 1 });
+userCoursesSchema.index(
+  { user: 1, course: 1 },
+  { unique: true, partialFilterExpression: { status: "completed" } }
+);
 
 module.exports = mongoose.model("UserCourses", userCoursesSchema);

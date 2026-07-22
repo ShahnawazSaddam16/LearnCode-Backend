@@ -1,15 +1,32 @@
-const Stripe = require("stripe");
 const Course = require("../models/course");
 const userCourses = require("../models/userCourses");
 const courseData = require("../utils/courseData");
-
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 const seedCourses = async () => {
   const count = await Course.countDocuments();
   if (count === 0) {
     await Course.insertMany(courseData);
   }
+};
+
+const getPurchasableCourse = async (slug, userId) => {
+  const course = await Course.findOne({ slug, isPublished: true });
+
+  if (!course) {
+    return { error: { status: 404, message: "Course not found" } };
+  }
+
+  const alreadyPurchased = await userCourses.findOne({
+    user: userId,
+    course: course._id,
+    status: "completed",
+  });
+
+  if (alreadyPurchased) {
+    return { error: { status: 400, message: "Course already purchased" } };
+  }
+
+  return { course };
 };
 
 const getAllCourses = async (req, res) => {
@@ -93,29 +110,16 @@ const buyCourse = async (req, res) => {
       });
     }
 
-    const course = await Course.findOne({ slug, isPublished: true });
+    const { course, error } = await getPurchasableCourse(slug, req.user._id);
 
-    if (!course) {
-      return res.status(404).json({
+    if (error) {
+      return res.status(error.status).json({
         success: false,
-        message: "Course not found",
+        message: error.message,
       });
     }
 
-    const alreadyPurchased = await userCourses.findOne({
-      user: req.user._id,
-      course: course._id,
-      status: "completed",
-    });
-
-    if (alreadyPurchased) {
-      return res.status(400).json({
-        success: false,
-        message: "Course already purchased",
-      });
-    }
-
-    const purchase = await userCourses.create({
+    await userCourses.create({
       user: req.user._id,
       email: req.user.email,
       course: course._id,
@@ -143,132 +147,8 @@ const buyCourse = async (req, res) => {
   }
 };
 
-const initiateStripePayment = async (req, res) => {
-  try {
-    const { slug } = req.body;
-
-    if (!slug) {
-      return res.status(400).json({
-        success: false,
-        message: "Course slug is required",
-      });
-    }
-
-    const course = await Course.findOne({ slug, isPublished: true });
-
-    if (!course) {
-      return res.status(404).json({
-        success: false,
-        message: "Course not found",
-      });
-    }
-
-    const alreadyPurchased = await userCourses.findOne({
-      user: req.user._id,
-      course: course._id,
-      status: "completed",
-    });
-
-    if (alreadyPurchased) {
-      return res.status(400).json({
-        success: false,
-        message: "Course already purchased",
-      });
-    }
-
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      payment_method_types: ["card"],
-      customer_email: req.user.email,
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: course.title,
-            },
-            unit_amount: Math.round(course.price * 100),
-          },
-          quantity: 1,
-        },
-      ],
-      success_url: `${req.headers.origin}/courses/${course.slug}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.origin}/courses/${course.slug}`,
-    });
-
-    await userCourses.create({
-      user: req.user._id,
-      email: req.user.email,
-      course: course._id,
-      title: course.title,
-      price: course.price,
-      paymentMethod: "stripe",
-      transactionId: session.id,
-      status: "pending",
-    });
-
-    res.status(200).json({
-      success: true,
-      url: session.url,
-    });
-  } catch (err) {
-    console.log("Stripe Initiate Error:", err);
-
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-const verifyStripePayment = async (req, res) => {
-  try {
-    const { session_id } = req.body;
-
-    if (!session_id) {
-      return res.status(400).json({
-        success: false,
-        message: "Session id is required",
-      });
-    }
-
-    const session = await stripe.checkout.sessions.retrieve(session_id);
-
-    const purchase = await userCourses.findOne({ transactionId: session_id });
-
-    if (!purchase) {
-      return res.status(404).json({
-        success: false,
-        message: "Purchase not found",
-      });
-    }
-
-    if (session.payment_status === "paid") {
-      purchase.status = "completed";
-      await purchase.save();
-    } else {
-      purchase.status = "failed";
-      await purchase.save();
-    }
-
-    res.status(200).json({
-      success: true,
-      status: purchase.status,
-    });
-  } catch (err) {
-    console.log("Stripe Verify Error:", err);
-
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
 module.exports = {
   getAllCourses,
   getCourseBySlug,
   buyCourse,
-  initiateStripePayment,
-  verifyStripePayment,
 };
