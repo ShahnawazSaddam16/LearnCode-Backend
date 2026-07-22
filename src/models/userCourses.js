@@ -8,8 +8,8 @@ const userCoursesSchema = new mongoose.Schema(
       required: true,
     },
     email: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     course: {
       type: mongoose.Schema.Types.ObjectId,
@@ -24,10 +24,23 @@ const userCoursesSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    paymentMethod: {
+      type: String,
+      enum: ["free", "stripe"],
+      default: "free",
+    },
+    transactionId: {
+      type: String,
+    },
+    status: {
+      type: String,
+      enum: ["pending", "completed", "failed"],
+      default: "completed",
+    },
   },
   { timestamps: true }
 );
 
-userCoursesSchema.index({ user: 1, course: 1 }, { unique: true });
+userCoursesSchema.index({ user: 1, course: 1, status: 1 });
 
 module.exports = mongoose.model("UserCourses", userCoursesSchema);
