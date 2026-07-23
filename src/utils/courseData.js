@@ -9,7 +9,6 @@ const courses = [
     price: 7,
     lessons: 24,
     thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
-    githubRepo: "https://github.com/buttnetworks/html-fundamentals",
     includes: [
       "24 hands-on lessons",
       "5 hands-on projects",
@@ -30,7 +29,6 @@ const courses = [
     price: 9,
     lessons: 32,
     thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",
-    githubRepo: "https://github.com/buttnetworks/css-mastery",
     includes: [
       "32 hands-on lessons",
       "8 responsive layout projects",
@@ -51,7 +49,6 @@ const courses = [
     price: 13,
     lessons: 48,
     thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
-    githubRepo: "https://github.com/buttnetworks/javascript-complete",
     includes: [
       "48 hands-on lessons",
       "12 coding challenges",
@@ -72,7 +69,6 @@ const courses = [
     price: 16,
     lessons: 56,
     thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
-    githubRepo: "https://github.com/buttnetworks/react-development",
     includes: [
       "56 hands-on lessons",
       "Build 4 full React applications",
@@ -93,7 +89,6 @@ const courses = [
     price: 11,
     lessons: 52,
     thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
-    githubRepo: "https://github.com/buttnetworks/python-programming",
     includes: [
       "52 hands-on lessons",
       "10 Python scripts and 3 full projects",
@@ -114,7 +109,6 @@ const courses = [
     price: 15,
     lessons: 50,
     thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
-    githubRepo: "https://github.com/buttnetworks/nodejs-backend-development",
     includes: [
       "50 hands-on lessons",
       "Build 3 REST APIs from scratch",
@@ -135,7 +129,6 @@ const courses = [
     price: 10,
     lessons: 40,
     thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg",
-    githubRepo: "https://github.com/buttnetworks/c-programming",
     includes: [
       "40 hands-on lessons",
       "Pointers and memory management deep dive",
@@ -156,7 +149,6 @@ const courses = [
     price: 9,
     lessons: 30,
     thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
-    githubRepo: "https://github.com/buttnetworks/sql-for-developers",
     includes: [
       "30 hands-on lessons",
       "Real-world database schema projects",
@@ -176,9 +168,7 @@ const courses = [
     duration: "15 hours",
     price: 12,
     lessons: 34,
-    thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg",
-    githubRepo: "https://github.com/buttnetworks/mongodb-database-design",
-    includes: [
+    thumbnail: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg",    includes: [
       "34 hands-on lessons",
       "Schema design and aggregation pipeline projects",
       "Mongoose ODM deep dive",

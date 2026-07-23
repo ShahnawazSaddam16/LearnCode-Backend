@@ -2,13 +2,41 @@ require("dotenv").config();
 const Stripe = require("stripe");
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const Course = require("../models/course");
+const Lesson = require("../models/lesson");
 const userCourses = require("../models/userCourses");
 const courseData = require("../utils/courseData");
+const lessonsData = require("../utils/lessons");
 
 const seedCourses = async () => {
   const count = await Course.countDocuments();
   if (count === 0) {
     await Course.insertMany(courseData);
+  }
+};
+
+const seedLessons = async () => {
+  const count = await Lesson.countDocuments();
+  if (count === 0) {
+    const courses = await Course.find();
+    const allLessons = [];
+
+    courses.forEach((course) => {
+      const lessonsForTech = lessonsData[course.technology] || [];
+      lessonsForTech.forEach((lesson) => {
+        allLessons.push({
+          course: course._id,
+          technology: course.technology,
+          order: lesson.order,
+          title: lesson.title,
+          theory: lesson.theory,
+          code: lesson.code,
+        });
+      });
+    });
+
+    if (allLessons.length > 0) {
+      await Lesson.insertMany(allLessons);
+    }
   }
 };
 
@@ -36,7 +64,7 @@ const getAllCourses = async (req, res) => {
   try {
     await seedCourses();
 
-    const courses = await Course.find({ isPublished: true }).select("-__v -githubRepo");
+    const courses = await Course.find({ isPublished: true }).select("-__v");
 
     res.status(200).json({
       success: true,
@@ -81,19 +109,68 @@ const getCourseBySlug = async (req, res) => {
       }
     }
 
-    const courseObj = course.toObject();
-
-    if (!hasPurchased) {
-      delete courseObj.githubRepo;
-    }
-
     res.status(200).json({
       success: true,
-      course: courseObj,
+      course,
       hasPurchased,
     });
   } catch (err) {
     console.log("Get Course Error:", err);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+const getLessonsByCourse = async (req, res) => {
+  try {
+    await seedCourses();
+    await seedLessons();
+
+    const { slug } = req.params;
+
+    const course = await Course.findOne({ slug, isPublished: true });
+
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found",
+      });
+    }
+
+    let hasPurchased = false;
+
+    if (req.user) {
+      const purchase = await userCourses.findOne({
+        user: req.user._id,
+        course: course._id,
+        status: "completed",
+      });
+
+      if (purchase) {
+        hasPurchased = true;
+      }
+    }
+
+    const lessons = await Lesson.find({ course: course._id }).sort({ order: 1 });
+
+    const responseLessons = hasPurchased
+      ? lessons
+      : lessons.map((lesson) => ({
+          _id: lesson._id,
+          order: lesson.order,
+          title: lesson.title,
+        }));
+
+    res.status(200).json({
+      success: true,
+      hasPurchased,
+      lessons: responseLessons,
+    });
+  } catch (err) {
+    console.log("Get Lessons Error:", err);
 
     res.status(500).json({
       success: false,
@@ -184,6 +261,7 @@ const stripeWebhook = async (req, res) => {
 module.exports = {
   getAllCourses,
   getCourseBySlug,
+  getLessonsByCourse,
   buyCourse,
   stripeWebhook,
 };
