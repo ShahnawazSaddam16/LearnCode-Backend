@@ -1,3 +1,4 @@
+require("dotenv").config();
 const Stripe = require("stripe");
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const Course = require("../models/course");
@@ -138,7 +139,8 @@ const buyCourse = async (req, res) => {
       title: course.title,
       price: course.price,
       status: "pending",
-      paymentIntentId: paymentIntent.id,
+      paymentMethod: "stripe",
+      transactionId: paymentIntent.id,
     });
 
     res.status(201).json({
@@ -171,7 +173,7 @@ const stripeWebhook = async (req, res) => {
     const paymentIntent = event.data.object;
 
     await userCourses.findOneAndUpdate(
-      { paymentIntentId: paymentIntent.id },
+      { transactionId: paymentIntent.id },
       { status: "completed" }
     );
   }

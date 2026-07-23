@@ -5,27 +5,27 @@ const dbConnection = require("./src/config/dbConnection");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./src/routes/authRoutes");
 const courseRoutes = require("./src/routes/courseRoutes");
+const { stripeWebhook } = require("./src/controllers/course");
 
 dotenv.config();
 
 const app = express();
 const Port = process.env.PORT;
 
-// Middleware
-app.use(express.json());
-app.use(cookieParser()); 
 
+app.use(express.json());
+app.use(cookieParser());
 
 app.use(cors({
-  origin: "http://localhost:3000", 
+  origin: "http://localhost:3000",
   credentials: true
 }));
 
-// Routes
+//Routes
+app.post("/api/courses/stripeWebhook", express.raw({ type: "application/json" }), stripeWebhook);
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 
-// Mongoose connect
 dbConnection();
 
 app.listen(Port, (err) => {

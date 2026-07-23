@@ -8,6 +8,5 @@ const router = express.Router();
 router.get("/courseData", limiter, authMiddleware, getAllCourses);
 router.get("/courseData/:slug", limiter, authMiddleware, getCourseBySlug);
 router.post("/buyCourse", limiter, authMiddleware, buyCourse);
-router.post("/stripeWebhook", limiter, authMiddleware, express.raw({ type: "application/json" }), stripeWebhook);
 
 module.exports = router;
