@@ -1,3 +1,5 @@
+const Stripe = require("stripe");
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const Course = require("../models/course");
 const userCourses = require("../models/userCourses");
 const courseData = require("../utils/courseData");
@@ -119,23 +121,30 @@ const buyCourse = async (req, res) => {
       });
     }
 
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(course.price * 100),
+      currency: "usd",
+      metadata: {
+        userId: req.user._id.toString(),
+        courseId: course._id.toString(),
+        slug: course.slug,
+      },
+    });
+
     await userCourses.create({
       user: req.user._id,
       email: req.user.email,
       course: course._id,
       title: course.title,
       price: course.price,
-      status: "completed",
+      status: "pending",
+      paymentIntentId: paymentIntent.id,
     });
 
     res.status(201).json({
       success: true,
-      message: "Course purchased successfully",
-      purchase: {
-        title: course.title,
-        price: course.price,
-        githubRepo: course.githubRepo,
-      },
+      message: "Payment intent created",
+      clientSecret: paymentIntent.client_secret,
     });
   } catch (err) {
     console.log("Buy Course Error:", err);
@@ -147,8 +156,32 @@ const buyCourse = async (req, res) => {
   }
 };
 
+const stripeWebhook = async (req, res) => {
+  const sig = req.headers["stripe-signature"];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    console.log("Webhook Signature Error:", err);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  if (event.type === "payment_intent.succeeded") {
+    const paymentIntent = event.data.object;
+
+    await userCourses.findOneAndUpdate(
+      { paymentIntentId: paymentIntent.id },
+      { status: "completed" }
+    );
+  }
+
+  res.status(200).json({ received: true });
+};
+
 module.exports = {
   getAllCourses,
   getCourseBySlug,
   buyCourse,
+  stripeWebhook,
 };
