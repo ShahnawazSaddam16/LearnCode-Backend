@@ -271,4 +271,58 @@ SELECT email FROM users
 EXCEPT
 SELECT email FROM newsletter_subscribers;`,
   },
+  {
+    order: 26,
+    title: "Data Control Language: GRANT and REVOKE",
+    theory: "GRANT gives specific privileges such as SELECT, INSERT, UPDATE, or DELETE to a user or role on a database object. REVOKE removes previously granted privileges.",
+    code: `GRANT SELECT, INSERT ON users TO 'analyst'@'localhost';
+REVOKE INSERT ON users FROM 'analyst'@'localhost';`,
+  },
+  {
+    order: 27,
+    title: "Recursive CTEs",
+    theory: "A recursive CTE references itself to process hierarchical or tree-structured data, such as organizational charts or category trees, by repeatedly applying a query until no new rows are produced.",
+    code: `WITH RECURSIVE org_chart AS (
+  SELECT id, name, manager_id
+  FROM employees
+  WHERE manager_id IS NULL
+  UNION ALL
+  SELECT e.id, e.name, e.manager_id
+  FROM employees e
+  JOIN org_chart o ON e.manager_id = o.id
+)
+SELECT * FROM org_chart;`,
+  },
+  {
+    order: 28,
+    title: "Pivoting Data",
+    theory: "Pivoting reshapes rows into columns, often using conditional aggregation with CASE inside aggregate functions, since many databases lack a native PIVOT keyword.",
+    code: `SELECT
+  product_id,
+  SUM(CASE WHEN quarter = 'Q1' THEN sales ELSE 0 END) AS q1_sales,
+  SUM(CASE WHEN quarter = 'Q2' THEN sales ELSE 0 END) AS q2_sales
+FROM sales_data
+GROUP BY product_id;`,
+  },
+  {
+    order: 29,
+    title: "Query Execution Order and EXPLAIN",
+    theory: "SQL clauses are written in one order but logically processed in another: FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY, LIMIT. EXPLAIN shows how the database plans to execute a query, revealing index usage and join strategy.",
+    code: `EXPLAIN
+SELECT country, COUNT(*)
+FROM users
+WHERE age > 18
+GROUP BY country
+HAVING COUNT(*) > 10
+ORDER BY COUNT(*) DESC
+LIMIT 5;`,
+  },
+  {
+    order: 30,
+    title: "Database Schemas and Information Schema",
+    theory: "A schema is a logical container grouping tables, views, and other objects within a database. The INFORMATION_SCHEMA is a built-in metadata schema that exposes details about tables, columns, and constraints.",
+    code: `SELECT table_name, column_name, data_type
+FROM information_schema.columns
+WHERE table_schema = 'shop_db' AND table_name = 'users';`,
+  },
 ];
