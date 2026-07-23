@@ -12,6 +12,9 @@ dotenv.config();
 const app = express();
 const Port = process.env.PORT;
 
+app.set("trust proxy", 1);
+
+app.post("/api/courses/stripeWebhook", express.raw({ type: "application/json" }), stripeWebhook);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -22,7 +25,6 @@ app.use(cors({
 }));
 
 //Routes
-app.post("/api/courses/stripeWebhook", express.raw({ type: "application/json" }), stripeWebhook);
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 
