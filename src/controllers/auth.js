@@ -151,6 +151,7 @@ const me = async (req, res) => {
       user: {
         name: req.user.name,
         email: req.user.email,
+        createdAt: req.user.createdAt,
       },
     });
 
