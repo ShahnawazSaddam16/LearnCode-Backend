@@ -214,6 +214,7 @@ const buyCourse = async (req, res) => {
       email: req.user.email,
       course: course._id,
       title: course.title,
+      slug: course.slug,
       price: course.price,
       status: "pending",
       paymentMethod: "stripe",
