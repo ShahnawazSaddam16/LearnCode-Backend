@@ -217,4 +217,4 @@ const deleteAccount = async (req, res) => {
   }
 };
 
-module.exports = { signin, login, me, logout };
+module.exports = { signin, login, me, logout, deleteAccount };
