@@ -1,4 +1,5 @@
 const User = require("../models/auth");
+const UserCourses = require("../models/userCourses");
 const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
@@ -180,6 +181,38 @@ const logout = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Logout failed",
+    });
+  }
+};
+
+const deleteAccount = async (req, res) => {
+  try {
+    const existingUser = await User.findByIdAndDelete(req.user._id);
+
+    if (!existingUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    await UserCourses.deleteMany({
+      user: req.user._id,
+    });
+
+    res.clearCookie("token");
+
+    return res.status(200).json({
+      success: true,
+      message: "Account deleted successfully",
+    });
+
+  } catch (err) {
+    console.error("Delete Account Error:", err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
     });
   }
 };
