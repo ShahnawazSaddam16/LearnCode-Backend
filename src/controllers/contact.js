@@ -8,7 +8,7 @@ const createContact = async(req,res)=>{
             return res.status(401).json({success: false, message: "Please fill all fields"});
         }
 
-        const newContact = await new Contact.create({
+        const newContact = await Contact.create({
             user:req.user._id,
             email,
             message
