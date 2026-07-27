@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./src/routes/authRoutes");
 const courseRoutes = require("./src/routes/courseRoutes");
 const { stripeWebhook } = require("./src/controllers/course");
+const contactRoutes = require("./src/routes/contactRoutes");
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use(cors({
 //Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
+app.use("/api", contactRoutes);
 
 dbConnection();
 
