@@ -9,7 +9,6 @@ const createContact = async(req,res)=>{
         }
 
         const newContact = await Contact.create({
-            user:req.user._id,
             email,
             message
         });
