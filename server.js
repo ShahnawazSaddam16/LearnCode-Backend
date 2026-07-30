@@ -7,6 +7,7 @@ const authRoutes = require("./src/routes/authRoutes");
 const courseRoutes = require("./src/routes/courseRoutes");
 const { stripeWebhook } = require("./src/controllers/course");
 const contactRoutes = require("./src/routes/contactRoutes");
+const reviewRoutes = require("./src/routes/reviewRoutes");
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use(cors({
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api", contactRoutes);
+app.use("/api", reviewRoutes);
 
 dbConnection();
 
