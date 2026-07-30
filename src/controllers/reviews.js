@@ -39,6 +39,7 @@ const createReviews = async (req, res) => {
 
         const newReview = await Reviews.create({
             user: req.user._id,
+            name: req.user.name,
             email: req.user.email,
             course: course._id,
             rating,
