@@ -61,4 +61,41 @@ const createReviews = async (req, res) => {
     }
 };
 
-module.exports = { createReviews };
+const fetchingReviews = async (req, res) => {
+    try {
+        const { slug } = req.params;
+
+        const course = await Course.findOne({
+            slug,
+            isPublished: true
+        });
+
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: "Course not found"
+            });
+        }
+
+        const reviews = await Reviews.find({
+            course: course._id
+        })
+        .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            count: reviews.length,
+            reviews
+        });
+
+    } catch (err) {
+        console.error("Fetch Reviews Error:", err);
+
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+module.exports = { createReviews, fetchingReviews };
