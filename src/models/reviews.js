@@ -4,11 +4,13 @@ const reviewSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        required: true,
+        unique:true,
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     name:{
         type:String,
@@ -17,7 +19,8 @@ const reviewSchema = new mongoose.Schema({
     course: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",
-        required: true
+        required: true,
+        unique: true,
     },
     rating: {
         type: Number,
