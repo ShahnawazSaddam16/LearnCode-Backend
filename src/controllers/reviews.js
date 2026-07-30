@@ -3,16 +3,20 @@ const Course = require("../models/course");
 
 const createReviews = async (req, res) => {
     try {
-        const { courseId, rating, reviewmessage } = req.body;
+        const { slug } = req.params;
+        const { rating, reviewmessage } = req.body;
 
-        if (!courseId || !rating || !reviewmessage) {
+        if (!rating || !reviewmessage) {
             return res.status(400).json({
                 success: false,
                 message: "Please fill all fields"
             });
         }
 
-        const course = await Course.findById(courseId);
+        const course = await Course.findOne({
+            slug,
+            isPublished: true
+        });
 
         if (!course) {
             return res.status(404).json({
@@ -23,7 +27,7 @@ const createReviews = async (req, res) => {
 
         const existingReview = await Reviews.findOne({
             user: req.user._id,
-            course: courseId
+            course: course._id
         });
 
         if (existingReview) {
@@ -36,7 +40,7 @@ const createReviews = async (req, res) => {
         const newReview = await Reviews.create({
             user: req.user._id,
             email: req.user.email,
-            course: courseId,
+            course: course._id,
             rating,
             reviewmessage
         });
@@ -48,11 +52,11 @@ const createReviews = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(err);
+        console.error("Create Review Error:", err);
 
         return res.status(500).json({
             success: false,
-            message: "Server Error"
+            message: err.message
         });
     }
 };

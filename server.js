@@ -19,6 +19,7 @@ app.set("trust proxy", 1);
 app.post("/api/courses/stripeWebhook", express.raw({ type: "application/json" }), stripeWebhook);
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(cors({
@@ -30,7 +31,7 @@ app.use(cors({
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api", contactRoutes);
-app.use("/api", reviewRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 dbConnection();
 
