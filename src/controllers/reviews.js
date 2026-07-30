@@ -13,6 +13,22 @@ const createReviews = async (req, res) => {
             });
         }
 
+        const trimmedMessage = reviewmessage.trim();
+
+        if (trimmedMessage.length < 10) {
+            return res.status(400).json({
+                success: false,
+                message: "Review message must be at least 10 characters long."
+            });
+        }
+
+        if (trimmedMessage.length > 500) {
+            return res.status(400).json({
+                success: false,
+                message: "Review message cannot exceed 500 characters."
+            });
+        }
+
         const course = await Course.findOne({
             slug,
             isPublished: true
@@ -43,7 +59,7 @@ const createReviews = async (req, res) => {
             email: req.user.email,
             course: course._id,
             rating,
-            reviewmessage
+            reviewmessage: trimmedMessage
         });
 
         return res.status(201).json({
