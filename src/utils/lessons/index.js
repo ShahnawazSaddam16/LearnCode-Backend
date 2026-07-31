@@ -8,4 +8,5 @@ module.exports = {
   c: require("./c"),
   sql: require("./sql"),
   mongodb: require("./mongodb"),
+  cplusplus: require("./c++"),
 };
