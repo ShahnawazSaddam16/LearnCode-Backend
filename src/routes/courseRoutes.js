@@ -12,6 +12,6 @@ router.get("/courseData/:slug", limiter, authMiddleware, getCourseBySlug);
 router.get("/courseData/:slug/lessons", limiter, authMiddleware, getLessonsByCourse);
 router.get("/userCourse", limiter, authMiddleware, userCourse);
 router.post("/buyCourse", limiter, authMiddleware, buyCourse);
-router.post("/create-course", limiter, createCourse);
+router.post("/create-courses", limiter, createCourse);
 
 module.exports = router;
