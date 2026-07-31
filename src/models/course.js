@@ -19,7 +19,7 @@ const courseSchema = new mongoose.Schema(
     technology: {
       type: String,
       required: true,
-      enum: ["html", "css", "javascript", "react", "python", "nodejs", "c", "sql", "mongodb"],
+      enum: ["html", "css", "javascript", "react", "python", "nodejs", "c", "sql", "mongodb","butt"],
       trim: true,
     },
 
