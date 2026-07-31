@@ -23,7 +23,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(cors({
-  origin: ["http://localhost:3000", "https://learncode.buttnetworks.com"],
+  origin: ["http://localhost:3000", "https://learncode.buttnetworks.com",
+    "https://admin-dashboard.buttnetworks.com"
+  ],
   credentials: true
 }));
 
