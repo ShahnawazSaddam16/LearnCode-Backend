@@ -243,29 +243,30 @@ const stripeWebhook = async (req, res) => {
     try {
       const course = await Course.findById(courseId);
 
-      if (course) {
-        await userCourses.findOneAndUpdate(
-          { transactionId: paymentIntent.id },
-          {
-            $setOnInsert: {
-              user: userId,
-              email,
-              course: course._id,
-              title: course.title,
-              slug: course.slug,
-              price: course.price,
-              status: "completed",
-              paymentMethod: "stripe",
-            },
-          },
-          { upsert: true }
-        );
-      }
-    } catch (err) {
-      if (err.code !== 11000) {
-        console.log("Webhook Save Error:", err);
+      if (!course) {
+        console.log("Webhook Course Not Found:", courseId);
         return res.status(500).json({ received: false });
       }
+
+      await userCourses.findOneAndUpdate(
+        { transactionId: paymentIntent.id },
+        {
+          $setOnInsert: {
+            user: userId,
+            email,
+            course: course._id,
+            title: course.title,
+            slug: course.slug,
+            price: course.price,
+            status: "completed",
+            paymentMethod: "stripe",
+          },
+        },
+        { upsert: true }
+      );
+    } catch (err) {
+      console.log("Webhook Save Error:", err);
+      return res.status(500).json({ received: false });
     }
   }
 
