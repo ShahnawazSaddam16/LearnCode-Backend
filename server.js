@@ -16,7 +16,7 @@ const Port = process.env.PORT;
 
 app.set("trust proxy", 1);
 
-app.post("/api/courses/stripeWebhook", express.raw({ type: "application/json" }), stripeWebhook);
+app.post("/api/courses/webhook", express.raw({ type: "application/json" }), stripeWebhook);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
