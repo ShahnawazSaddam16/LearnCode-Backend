@@ -204,21 +204,10 @@ const buyCourse = async (req, res) => {
       currency: "usd",
       metadata: {
         userId: req.user._id.toString(),
+        email: req.user.email,
         courseId: course._id.toString(),
         slug: course.slug,
       },
-    });
-
-    await userCourses.create({
-      user: req.user._id,
-      email: req.user.email,
-      course: course._id,
-      title: course.title,
-      slug: course.slug,
-      price: course.price,
-      status: "pending",
-      paymentMethod: "stripe",
-      transactionId: paymentIntent.id,
     });
 
     res.status(201).json({
@@ -249,11 +238,35 @@ const stripeWebhook = async (req, res) => {
 
   if (event.type === "payment_intent.succeeded") {
     const paymentIntent = event.data.object;
+    const { userId, email, courseId } = paymentIntent.metadata;
 
-    await userCourses.findOneAndUpdate(
-      { transactionId: paymentIntent.id },
-      { status: "completed" }
-    );
+    try {
+      const course = await Course.findById(courseId);
+
+      if (course) {
+        await userCourses.findOneAndUpdate(
+          { transactionId: paymentIntent.id },
+          {
+            $setOnInsert: {
+              user: userId,
+              email,
+              course: course._id,
+              title: course.title,
+              slug: course.slug,
+              price: course.price,
+              status: "completed",
+              paymentMethod: "stripe",
+            },
+          },
+          { upsert: true }
+        );
+      }
+    } catch (err) {
+      if (err.code !== 11000) {
+        console.log("Webhook Save Error:", err);
+        return res.status(500).json({ received: false });
+      }
+    }
   }
 
   res.status(200).json({ received: true });
